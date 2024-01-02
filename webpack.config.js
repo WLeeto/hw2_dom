@@ -1,39 +1,62 @@
-const HtnlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    mode: 'development',
-    module: {
-        rules: [
-            {
-                test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader, 'css-loader'
-                ]
-            },
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader'
-            },
-            {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
-                use: [
-                    {
-                      loader: 'file-loader',
-                      options: {
-                        name: '[name].[ext]',
-                        outputPath: 'img/'
-                      }
-                    },
-                  ]
+  target: 'web',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader, 'css-loader',
+        ],
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        // type: 'asset/resource',
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'img/'
             }
+          },
         ]
-    },
-    plugins: [
-        new HtnlWebpackPlugin({
-            template: './src/index.html'
-        }),
-        new MiniCssExtractPlugin()
-    ]
-}
+      },
+    ],
+  },
+  plugins: [
+    new HtmlWebPackPlugin({
+      template: './src/index.html',
+      filename: './index.html',
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  optimization: {
+    minimize: false
+  }
+};
